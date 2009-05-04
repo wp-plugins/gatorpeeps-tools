@@ -3,7 +3,7 @@
 Plugin Name: Gatorpeeps Tools
 Plugin URI: http://afrigator.com/peeps/tools
 Description: A complete integration between your WordPress blog and <a href="http://gatorpeeps.com">Gatorpeeps</a>. Bring your peeps into your blog and pass your blog posts to Gatorpeeps. Based on Alex King's <a target="_blank" href="http://alexking.org/projects/wordpress">Twitter Tools</a> plugin.
-Version: 1.0
+Version: 1.1
 Author: Afrigator
 Author URI: http://afrigator.com
 */
@@ -465,11 +465,19 @@ class gatorpeeps_tools {
 		}
 		$peep = new peeps_peep;
 		
-		// get short url through gatorurl.com
-		$gatorurl_api = "http://gatorurl.com/api/rest.php?url=";
-		$api_handle = fopen ($gatorurl_api . get_permalink($post_id), "r");
-		$gator_url = fread ($api_handle, 8192);
-		fclose ($api_handle);
+		// get short url through gatorurl.com (tests to see if fopen is supported)
+		if(function_exists("fopen")){
+			$gatorurl_api = "http://gatorurl.com/api/rest.php?url=";
+			$api_handle = fopen ($gatorurl_api . get_permalink($post_id), "r");
+			if(!$api_handle){
+				$gator_url = get_permalink($post_id);
+			} else {
+				$gator_url = fread ($api_handle, 8192);
+				fclose ($api_handle);
+			}
+		} else {
+			$gator_url = get_permalink($post_id);
+		}
 		
 		$url = apply_filters('peeps_blog_post_url', $gator_url);
 		$peep->gp_text = sprintf(__($this->peeps_format, 'gatorpeeps-tools'), $post->post_title, $url);
@@ -736,7 +744,7 @@ function peeps_sidebar_peeps() {
 	else {
 		$where = '';
 	}
-	$peeps = $wpdb->get_results("
+	$peeps_results = $wpdb->get_results("
 		SELECT *
 		FROM $wpdb->peeps
 		WHERE gp_text NOT LIKE '$peeps->peeps_prefix%'
@@ -747,8 +755,8 @@ function peeps_sidebar_peeps() {
 	");
 	$output = '<div class="peeps_peeps">'."\n"
 		.'	<ul>'."\n";
-	if (count($peeps) > 0) {
-		foreach ($peeps as $peep) {
+	if (count($peeps_results) > 0) {
+		foreach ($peeps_results as $peep) {
 			$output .= '		<li>'.peeps_peeps_display($peep).'</li>'."\n";
 		}
 	}
@@ -772,7 +780,7 @@ function peeps_sidebar_peeps() {
 
 function peeps_latest_peep() {
 	global $wpdb, $peeps;
-	$peeps = $wpdb->get_results("
+	$peeps_results = $wpdb->get_results("
 		SELECT *
 		FROM $wpdb->peeps
 		WHERE gp_text NOT LIKE '$peeps->peeps_prefix%'
@@ -780,8 +788,8 @@ function peeps_latest_peep() {
 		ORDER BY gp_created_at DESC
 		LIMIT 1
 	");
-	if (count($peeps) == 1) {
-		foreach ($peeps as $peep) {
+	if (count($peeps_results) == 1) {
+		foreach ($peeps_results as $peep) {
 			$output = peeps_peeps_display($peep);
 		}
 	}
@@ -799,7 +807,7 @@ function peeps_peeps_display($peep, $time = 'relative') {
 	}
 	switch ($time) {
 		case 'relative':
-			$time_display = peeps_relativeTime($peep->gp_created_at, 3);
+			$time_display = peeps_relativeTime($peep->gp_created_at);
 			break;
 		case 'absolute':
 			$time_display = '#';
@@ -1790,101 +1798,31 @@ if (!function_exists('ak_gmmktime')) {
 }
 
 /**
+Relative Time format (updated 04-05-2009)
+*/
 
-based on: http://www.gyford.com/phil/writing/2006/12/02/quick_twitter.php
+function plural($num) {
+	if ($num != 1)
+	return "s";
+}
 
-	 * Returns a relative date, eg "4 hrs ago".
-	 *
-	 * Assumes the passed-in can be parsed by strtotime.
-	 * Precision could be one of:
-	 * 	1	5 hours, 3 minutes, 2 seconds ago (not yet implemented).
-	 * 	2	5 hours, 3 minutes
-	 * 	3	5 hours
-	 *
-	 * This is all a little overkill, but copied from other places I've used it.
-	 * Also superfluous, now I've noticed that the Gatorpeeps API includes something
-	 * similar, but this version is more accurate and less verbose.
-	 *
-	 * @access private.
-	 * @param string date In a format parseable by strtotime().
-	 * @param integer precision
-	 * @return string
-	 */
-function peeps_relativeTime ($date, $precision=2)
-{
-
-	$now = time();
-
-	$time = gmmktime(
-		substr($date, 11, 2)
-		, substr($date, 14, 2)
-		, substr($date, 17, 2)
-		, substr($date, 5, 2)
-		, substr($date, 8, 2)
-		, substr($date, 0, 4)
-	);
-
-	$time = strtotime(date('Y-m-d H:i:s', $time));
-
-	$diff 	=  $now - $time;
-
-	$months	=  floor($diff/2419200);
-	$diff 	-= $months * 2419200;
-	$weeks 	=  floor($diff/604800);
-	$diff	-= $weeks*604800;
-	$days 	=  floor($diff/86400);
-	$diff 	-= $days * 86400;
-	$hours 	=  floor($diff/3600);
-	$diff 	-= $hours * 3600;
-	$minutes = floor($diff/60);
-	$diff 	-= $minutes * 60;
-	$seconds = $diff;
-
-	if ($months > 0) {
-		return date('Y-m-d', $time);
-	} else {
-		$relative_date = '';
-		if ($weeks > 0) {
-			// Weeks and days
-			$relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
-			if ($precision <= 2) {
-				$relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
-				if ($precision == 1) {
-					$relative_date .= $hours>0?($relative_date?', ':'').$hours.' hr'.($hours>1?'s':''):'';
-				}
-			}
-		} elseif ($days > 0) {
-			// days and hours
-			$relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
-			if ($precision <= 2) {
-				$relative_date .= $hours>0?($relative_date?', ':'').$hours.' hr'.($hours>1?'s':''):'';
-				if ($precision == 1) {
-					$relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' min'.($minutes>1?'s':''):'';
-				}
-			}
-		} elseif ($hours > 0) {
-			// hours and minutes
-			$relative_date .= ($relative_date?', ':'').$hours.' hr'.($hours>1?'s':'');
-			if ($precision <= 2) {
-				$relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' min'.($minutes>1?'s':''):'';
-				if ($precision == 1) {
-					$relative_date .= $seconds>0?($relative_date?', ':'').$seconds.' sec'.($seconds>1?'s':''):'';
-				}
-			}
-		} elseif ($minutes > 0) {
-			// minutes only
-			$relative_date .= ($relative_date?', ':'').$minutes.' min'.($minutes>1?'s':'');
-			if ($precision == 1) {
-				$relative_date .= $seconds>0?($relative_date?', ':'').$seconds.' sec'.($seconds>1?'s':''):'';
-			}
-		} else {
-			// seconds only
-			$relative_date .= ($relative_date?', ':'').$seconds.' sec'.($seconds>1?'s':'');
-		}
-	}
-
-	// Return relative date and add proper verbiage
-	return sprintf(__('%s ago', 'gatorpeeps-tools'), $relative_date);
+function peeps_relativeTime ($date) {
+	$diff = time() - strtotime($date);
+	if ($diff<60)
+	return $diff . " second" . plural($diff) . " ago";
+	$diff = round($diff/60);
+	if ($diff<60)
+	return $diff . " minute" . plural($diff) . " ago";
+	$diff = round($diff/60);
+	if ($diff<24)
+	return $diff . " hour" . plural($diff) . " ago";
+	$diff = round($diff/24);
+	if ($diff<7)
+	return $diff . " day" . plural($diff) . " ago";
+	$diff = round($diff/7);
+	if ($diff<4)
+	return $diff . " week" . plural($diff) . " ago";
+	return "on " . date("F j, Y", strtotime($date));
 }
 if (!class_exists('Services_JSON')) {
 

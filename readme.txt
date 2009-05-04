@@ -4,7 +4,7 @@ Donate link: http://gatorpeeps.com
 Tags: gatorpeeps, peep, peeps, integration, post, digest, notify, integrate, archive, widget, tools, twitter
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 Gatorpeeps Tools is a plugin that creates a complete integration between your WordPress blog and your Gatorpeeps account.
 
@@ -80,7 +80,6 @@ Example psuedo-code:
 
 * Only one Gatorpeeps account is supported (not one account per author).
 * peeps are not deleted from the peep table in your WordPress database when they are deleted from Gatorpeeps. To delete from your WordPress database, use a database admin tool like phpMyAdmin.
-* The relative date function isn't fully localised.
 
 == Frequently Asked Questions ==
 
@@ -117,10 +116,14 @@ No, this is not a good idea. Gatorpeeps Tools needs to be able to look at the be
 3. Test blog showing Gatorpeeps Daily Digest of peeps as well as Sidebar Widget with 5 latest peeps.
 4. The "peep" menu under the Wordpress 2.7.1 Posts tab. Clicking this link will allow you to peep directly from the Dashboard to Gatorpeeps.
 5. Screenshot showing the Writing of Peeps via the Wordpress admin area.
+6. Setting under new blog post that let's you decide if you want to post to Gatorpeeps or not.
 
 == Credits ==
 
 This plugin would simply not be possible without the magnificent [Twitter Tools](http://alexking.org/projects/wordpress) plugin created by Alex King. We have adapted Alex's original plugin to work with the Gatorpeeps API so we can't claim credit for this plugin at all! Thanks Alex!
 
 == History ==
+* 2009-05-04 = Fixed the relative timestamp in sidebar peeps.
+* 2009-05-04 = Fixed a bug where fopen wasn't supported on server. We now check if fopen is supported before converting to short url.
+* 2009-05-04 = Fixed some php fatal errors with rewriting of the global $peeps.
 * 2009-05-03 = Version 1.0 released. Adapted to Gatorpeeps API.
