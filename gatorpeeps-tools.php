@@ -3,7 +3,7 @@
 Plugin Name: Gatorpeeps Tools
 Plugin URI: http://afrigator.com/peeps/tools
 Description: A complete integration between your WordPress blog and <a href="http://gatorpeeps.com">Gatorpeeps</a>. Bring your peeps into your blog and pass your blog posts to Gatorpeeps. Based on Alex King's <a target="_blank" href="http://alexking.org/projects/wordpress">Twitter Tools</a> plugin.
-Version: 1.1
+Version: 1.2
 Author: Afrigator
 Author URI: http://afrigator.com
 */
@@ -465,19 +465,29 @@ class gatorpeeps_tools {
 		}
 		$peep = new peeps_peep;
 		
-		// get short url through gatorurl.com (tests to see if fopen is supported)
-		if(function_exists("fopen")){
-			$gatorurl_api = "http://gatorurl.com/api/rest.php?url=";
-			$api_handle = fopen ($gatorurl_api . get_permalink($post_id), "r");
-			if(!$api_handle){
-				$gator_url = get_permalink($post_id);
-			} else {
-				$gator_url = fread ($api_handle, 8192);
-				fclose ($api_handle);
-			}
-		} else {
-			$gator_url = get_permalink($post_id);
+		// get short url through gatorurl.com (replaced fopen function with curl due to servers like Dreamhost not supporting it - 06-05-2009)
+		function get_content($url)
+		{
+		    $ch = curl_init();
+		
+		    curl_setopt ($ch, CURLOPT_URL, $url);
+		    curl_setopt ($ch, CURLOPT_HEADER, 0);
+		
+		    ob_start();
+		
+		    curl_exec ($ch);
+		    curl_close ($ch);
+		    $string = ob_get_contents();
+		
+		    ob_end_clean();
+		   
+		    return $string;    
 		}
+		
+		$gatorurl_api = "http://gatorurl.com/api/rest.php?url=";
+		$api_handle = $gatorurl_api . get_permalink($post_id);
+		
+		$gator_url = get_content("".$api_handle."");
 		
 		$url = apply_filters('peeps_blog_post_url', $gator_url);
 		$peep->gp_text = sprintf(__($this->peeps_format, 'gatorpeeps-tools'), $post->post_title, $url);
