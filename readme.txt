@@ -123,7 +123,7 @@ No, this is not a good idea. Gatorpeeps Tools needs to be able to look at the be
 This plugin would simply not be possible without the magnificent [Twitter Tools](http://alexking.org/projects/wordpress) plugin created by Alex King. We have adapted Alex's original plugin to work with the Gatorpeeps API so we can't claim credit for this plugin at all! Thanks Alex!
 
 == History ==
-* 2009-05-06 = Replaced the gatorurl permalink shorting function from fopen to curl. Dreamhost & Mediatemple don't support fopen.
+* 2009-05-06 = Replaced the gatorurl permalink shortening function from fopen to curl. Dreamhost & Mediatemple don't support fopen.
 * 2009-05-04 = Fixed the relative timestamp in sidebar peeps.
 * 2009-05-04 = Fixed a bug where fopen wasn't supported on server. We now check if fopen is supported before converting to short url.
 * 2009-05-04 = Fixed some php fatal errors with rewriting of the global $peeps.
