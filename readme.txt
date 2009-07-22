@@ -4,7 +4,7 @@ Donate link: http://gatorpeeps.com
 Tags: gatorpeeps, peep, peeps, integration, post, digest, notify, integrate, archive, widget, tools, twitter
 Requires at least: 2.3
 Tested up to: 2.8.2
-Stable tag: 1.3
+Stable tag: 1.4
 
 Gatorpeeps Tools is a plugin that creates a complete integration between your WordPress blog and your Gatorpeeps account.
 
@@ -122,10 +122,22 @@ No, this is not a good idea. Gatorpeeps Tools needs to be able to look at the be
 
 This plugin would simply not be possible without the magnificent [Twitter Tools](http://alexking.org/projects/wordpress) plugin created by Alex King. We have adapted Alex's original plugin to work with the Gatorpeeps API so we can't claim credit for this plugin at all! Thanks Alex!
 
-== History ==
-* 2009-07-22 = Version bumped to 2.8.2
-* 2009-05-06 = Replaced the gatorurl permalink shortening function from fopen to curl. Dreamhost & Mediatemple don't support fopen.
-* 2009-05-04 = Fixed the relative timestamp in sidebar peeps.
-* 2009-05-04 = Fixed a bug where fopen wasn't supported on server. We now check if fopen is supported before converting to short url.
-* 2009-05-04 = Fixed some php fatal errors with rewriting of the global $peeps.
-* 2009-05-03 = Version 1.0 released. Adapted to Gatorpeeps API.
+== Changelog ==  
+
+= 1.4 =
+* Tested on Wordpress 2.8.2. No changes needed to be made to source code.
+* Implemented new Changelog format for Wordpress Plugins.
+
+= 1.3 =  
+* Version bumped and tested on version 2.8.2.
+
+= 1.2 =
+* Replaced the gatorurl permalink shortening function from fopen to curl. Dreamhost & Mediatemple don't support fopen.
+
+= 1.1 =
+* Fixed the relative timestamp in sidebar peeps.
+* Fixed a bug where fopen wasn't supported on server. We now check if fopen is supported before converting to short url.
+* Fixed some php fatal errors with rewriting of the global $peeps.
+
+= 1.0 =
+* Version 1.0 released. Adapted to Gatorpeeps API.
