@@ -3,7 +3,7 @@
 Plugin Name: Gatorpeeps Tools
 Plugin URI: http://afrigator.com/peeps/tools
 Description: A complete integration between your WordPress blog and <a href="http://gatorpeeps.com">Gatorpeeps</a>. Bring your peeps into your blog and pass your blog posts to Gatorpeeps. Based on Alex King's <a target="_blank" href="http://alexking.org/projects/wordpress">Twitter Tools</a> plugin.
-Version: 2.0.0
+Version: 2.0.1
 Author: Afrigator
 Author URI: http://afrigator.com
 */

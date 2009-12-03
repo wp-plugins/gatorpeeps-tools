@@ -3,8 +3,8 @@ Contributors: justinhartman
 Donate link: http://gatorpeeps.com
 Tags: gatorpeeps, peep, peeps, integration, post, digest, notify, integrate, archive, widget, tools, twitter
 Requires at least: 2.3
-Tested up to: 2.8.5
-Stable tag: 2.0.0
+Tested up to: 2.9
+Stable tag: 2.0.1
 
 Gatorpeeps Tools is a plugin that creates a complete integration between your WordPress blog and your Gatorpeeps account.
 
@@ -123,6 +123,9 @@ No, this is not a good idea. Gatorpeeps Tools needs to be able to look at the be
 This plugin would simply not be possible without the magnificent [Twitter Tools](http://alexking.org/projects/wordpress) plugin created by Alex King. We have adapted Alex's original plugin to work with the Gatorpeeps API so we can't claim credit for this plugin at all! Thanks Alex!
 
 == Changelog ==  
+
+= 2.0.1 =
+* Tested to work on Wordpress 2.9.
 
 = 2.0.0 =
 * Tested on Wordpress 2.8.5. No changes needed to be made to source code.
